@@ -16,6 +16,9 @@
 #include "HistoryFileObserver.hpp"
 #include "IObserver.hpp"
 #include "NotificationService.hpp"
+#include "DiffStrategy.hpp"
+#include "Folder.hpp"
+#include "File.hpp"
 
 namespace {
 class CapturingObserver : public IObserver {
@@ -132,6 +135,27 @@ int main() {
     }
     if (!startsWith(historyLines[5], "[branch_change_hook] switched feature")) {
         std::cerr << "Branch switch history line unexpected: " << historyLines[5] << "\n";
+        return 1;
+    }
+
+    TreeDiffStrategy treeStrategy;
+    auto base = std::make_shared<Folder>("root");
+    base->addItem(std::make_unique<File>("foo.txt", "alpha"));
+
+    auto updated = std::make_shared<Folder>("root");
+    updated->addItem(std::make_unique<File>("foo.txt", "beta"));
+    updated->addItem(std::make_unique<Folder>("docs"));
+
+    auto diffResult = treeStrategy.diff(
+        std::static_pointer_cast<IFileSystemItem>(base),
+        std::static_pointer_cast<IFileSystemItem>(updated));
+
+    if (diffResult.find("~ foo.txt") == std::string::npos) {
+        std::cerr << "Diff output missing modified marker: " << diffResult << "\n";
+        return 1;
+    }
+    if (diffResult.find("+ docs/") == std::string::npos) {
+        std::cerr << "Diff output missing added directory: " << diffResult << "\n";
         return 1;
     }
 

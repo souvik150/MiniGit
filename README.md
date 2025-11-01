@@ -48,6 +48,14 @@ Every mutating command emits a structured notification that is appended to `.his
 [branch_change_hook] switched feature/auth
 ```
 
+The default diff strategy performs a structural tree comparison, reporting added, removed, and modified files/directories:
+
+```
+TreeDiff results:
++ docs/ (dir)
+~ src/auth/service.cpp
+```
+
 <img width="2613" height="1650" alt="mermaid-diagram-2025-11-01-191740" src="https://github.com/user-attachments/assets/dfc4fadf-6f35-42fc-9cd5-33923c15408f" />
 
 | Component | Responsibility | Notes |
@@ -66,7 +74,7 @@ Every mutating command emits a structured notification that is appended to `.his
 - **Composite (Folder/File):** The in-memory filesystem tree treats files and folders uniformly via `IFileSystemItem`, letting commits clone or diff entire subtrees without special casing.
 - **Command (CLI actions):** The CLI surface mirrors command semantics (add, commit, branch). While explicit command objects aren’t materialised yet, the design leaves clear seams to introduce them—each user action is already encapsulated in a dedicated method on `GitManager`.
 - **Observer (NotificationService & HistoryFileObserver):** All state transitions broadcast hooks (commit, branch change, file/folder mutations, revert). Observers can be swapped or extended—tests register dummy observers to capture events without touching disk.
-- **Strategy (DiffStrategy):** `Repository::setDiffStrategy` accepts algorithm choices (`LineDiffStrategy`, `WordDiffStrategy`). The strategy lives alongside the repository to keep diff evolution independent from commit logic.
+- **Strategy (DiffStrategy):** `Repository::setDiffStrategy` accepts algorithm choices (default `TreeDiffStrategy`, plus `LineDiffStrategy` and `WordDiffStrategy`). The strategy lives alongside the repository to keep diff evolution independent from commit logic.
 - **Factory (BranchFactory):** `DefaultBranchFactory` encapsulates how branches materialise (fresh roots vs. cloned snapshots) while assigning the default diff strategy. Replacing it allows alternative branch bootstrap policies.
 
 By keeping owned services (`BranchDatabase`, `NotificationService`) behind `std::unique_ptr`, MiniGit avoids implicit sharing and clarifies lifetimes—`GitManager` is the sole owner, which aligns with the “single orchestrator” mental model and simplifies testing.

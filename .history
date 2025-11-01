@@ -1,5 +1,19 @@
 [file_hook] foo
+[commit_hook] commit_1762025388181 first 
+[file_hook] foo
+[commit_hook] commit_1762025388181 second 
+[file_hook] foo
+[commit_hook] commit_1762025394694 c1 
 [folder_hook] docs
-[commit_hook] commit_1762023723788 first 
-[branch_change_hook] created feature
-[branch_change_hook] switched feature
+[commit_hook] commit_1762025394694 c2 
+[file_hook] foo
+[commit_hook] commit_1762025431839 c1 
+[folder_hook] docs
+[commit_hook] commit_1762025431839 c2 
+[file_hook] 1.txt
+[commit_hook] commit_1762025640587 first 
+[folder_hook] fol
+[commit_hook] commit_1762025650769 second 
+[file_hook] file.txt
+[folder_hook] text.cu
+[commit_hook] commit_1762025691784 thrid 

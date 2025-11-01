@@ -6,6 +6,7 @@
 #define MINIGIT_DIFFSTRATEGYTYPE_HPP
 
 enum class DiffStrategyType {
+    Tree,
     Line,
     Word
 };

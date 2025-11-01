@@ -7,6 +7,8 @@
 
 std::shared_ptr<IDiffStrategy> DiffStrategyFactory::getStrategy(DiffStrategyType type) {
     switch(type) {
+        case DiffStrategyType::Tree:
+            return std::make_shared<TreeDiffStrategy>();
         case DiffStrategyType::Line:
             return std::make_shared<LineDiffStrategy>();
         case DiffStrategyType::Word:

@@ -18,7 +18,7 @@ public:
         auto emptyRoot = std::make_shared<Folder>("root");
         auto repo = std::make_shared<Repository>(
             emptyRoot,
-            DiffStrategyFactory::getStrategy(DiffStrategyType::Line));
+            DiffStrategyFactory::getStrategy(DiffStrategyType::Tree));
         return std::make_shared<Branch>(name, repo);
     }
 
@@ -36,7 +36,7 @@ public:
         auto clonedRoot = std::shared_ptr<IFileSystemItem>(std::move(clonedRootUnique));
         auto newRepo = std::make_shared<Repository>(
             clonedRoot,
-            DiffStrategyFactory::getStrategy(DiffStrategyType::Line));
+            DiffStrategyFactory::getStrategy(DiffStrategyType::Tree));
         return std::make_shared<Branch>(name, newRepo);
     }
 };

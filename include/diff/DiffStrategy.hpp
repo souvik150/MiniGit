@@ -14,6 +14,11 @@ public:
     virtual std::string diff(const std::shared_ptr<IFileSystemItem>& a, const std::shared_ptr<IFileSystemItem>& b) = 0;
 };
 
+class TreeDiffStrategy : public IDiffStrategy {
+public:
+    std::string diff(const std::shared_ptr<IFileSystemItem>& a, const std::shared_ptr<IFileSystemItem>& b) override;
+};
+
 class LineDiffStrategy : public IDiffStrategy {
 public:
     std::string diff(const std::shared_ptr<IFileSystemItem>& a, const std::shared_ptr<IFileSystemItem>& b) override;
