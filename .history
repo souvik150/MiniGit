@@ -1,0 +1,5 @@
+[file_hook] foo
+[folder_hook] docs
+[commit_hook] commit_1762023723788 first 
+[branch_change_hook] created feature
+[branch_change_hook] switched feature
