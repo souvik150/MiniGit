@@ -4,9 +4,12 @@
 
 #ifndef MINIGIT_CLI_HPP
 #define MINIGIT_CLI_HPP
-#include <string>
-#include <vector>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "ICommand.hpp"
 
 class GitManager;
 
@@ -17,9 +20,9 @@ public:
     void parseCommand(const std::string& cmdLine);
 
 private:
-    GitManager& gitManager;
     static GitManager& bootstrapGitManager();
-    std::string normalizeCommitId(const std::string& input) const;
+    void registerCommands();
+    std::unordered_map<std::string, std::unique_ptr<ICommand>> commandRegistry;
     std::vector<std::string> split(const std::string& str);
 };
 

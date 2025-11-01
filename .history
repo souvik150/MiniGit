@@ -17,3 +17,5 @@
 [file_hook] file.txt
 [folder_hook] text.cu
 [commit_hook] commit_1762025691784 thrid 
+[file_hook] foo
+[commit_hook] commit_1762027831564 first

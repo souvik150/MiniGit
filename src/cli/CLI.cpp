@@ -6,15 +6,21 @@
 #include "BranchDatabase.hpp"
 #include "NotificationService.hpp"
 #include "HistoryFileObserver.hpp"
+#include "ICommand.hpp"
 #include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <cctype>
 #include <memory>
+#include <sstream>
 
 #include "DefaultBranchFactory.hpp"
 
-CLI::CLI() : gitManager(bootstrapGitManager()) {}
+CLI::CLI() {
+    try {
+        (void)GitManager::getInstance();
+    } catch (const std::exception&) {
+        bootstrapGitManager();
+    }
+    registerCommands();
+}
 
 void CLI::start() {
     std::string line;
@@ -35,66 +41,14 @@ void CLI::parseCommand(const std::string& cmdLine) {
     const std::string& cmd = tokens[0];
     std::vector<std::string> args(tokens.begin() + 1, tokens.end());
 
+    auto it = commandRegistry.find(cmd);
+    if (it == commandRegistry.end()) {
+        std::cout << "Unknown command: " << cmd << "\n";
+        return;
+    }
+
     try {
-        if (cmd == "add") {
-            if (args.size() < 2) {
-                std::cout << "Usage: add <file|folder> <name>\n";
-                return;
-            }
-            if (args[0] == "file") {
-                gitManager.addFile(args[1], "");  // content empty for now
-                std::cout << "File added: " << args[1] << "\n";
-            } else if (args[0] == "folder") {
-                gitManager.addFolder(args[1]);
-                std::cout << "Folder added: " << args[1] << "\n";
-            } else {
-                std::cout << "Unknown add type. Use 'file' or 'folder'.\n";
-            }
-        }
-        else if (cmd == "commit") {
-            if (args.empty()) {
-                std::cout << "Usage: commit <message>\n";
-                return;
-            }
-            std::string message;
-            for (const auto& word : args) message += word + " ";
-            gitManager.commit(message);
-            std::cout << "Commit created.\n";
-        }
-        else if (cmd == "diff") {
-            std::cout << gitManager.diffLast() << "\n";
-        }
-        else if (cmd == "revert") {
-            if (args.empty()) {
-                std::cout << "Usage: revert <commit_id>\n";
-                return;
-            }
-            auto commitId = normalizeCommitId(args[0]);
-            gitManager.revert(commitId);
-            std::cout << "Reverted to commit: " << commitId << "\n";
-        }
-        else if (cmd == "branch") {
-            if (args.empty()) {
-                gitManager.listBranches();
-            } else {
-                gitManager.createBranch(args[0]);
-                std::cout << "Branch created: " << args[0] << "\n";
-            }
-        }
-        else if (cmd == "switch") {
-            if (args.empty()) {
-                std::cout << "Usage: switch <branch_name>\n";
-                return;
-            }
-            gitManager.switchBranch(args[0]);
-            std::cout << "Switched to branch: " << args[0] << "\n";
-        }
-        else if (cmd == "log") {
-            gitManager.logCommits();
-        }
-        else {
-            std::cout << "Unknown command: " << cmd << "\n";
-        }
+        it->second->execute(args);
     } catch (const std::exception& ex) {
         std::cout << "Error: " << ex.what() << "\n";
     }
@@ -120,17 +74,13 @@ GitManager& CLI::bootstrapGitManager() {
     return GitManager::getInstance();
 }
 
-std::string CLI::normalizeCommitId(const std::string& input) const {
-    if (input.rfind("commit_", 0) == 0) {
-        return input;
-    }
-
-    const bool allDigits = !input.empty() &&
-        std::all_of(input.begin(), input.end(), [](unsigned char ch) { return std::isdigit(ch); });
-
-    if (allDigits) {
-        return "commit_" + input;
-    }
-
-    return input;
+void CLI::registerCommands() {
+    auto& gitManager = GitManager::getInstance();
+    commandRegistry.emplace("add", std::make_unique<AddCommand>(gitManager));
+    commandRegistry.emplace("commit", std::make_unique<CommitCommand>(gitManager));
+    commandRegistry.emplace("diff", std::make_unique<DiffCommand>(gitManager));
+    commandRegistry.emplace("log", std::make_unique<LogCommand>(gitManager));
+    commandRegistry.emplace("revert", std::make_unique<RevertCommand>(gitManager));
+    commandRegistry.emplace("branch", std::make_unique<BranchCommand>(gitManager));
+    commandRegistry.emplace("switch", std::make_unique<SwitchCommand>(gitManager));
 }
