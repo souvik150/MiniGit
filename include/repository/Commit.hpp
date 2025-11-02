@@ -23,10 +23,10 @@ private:
     friend class CommitBuilder;
 
 public:
-    const std::string& getId() const { return id; }
-    const std::string& getMessage() const { return message; }
-    const std::string& getTimestamp() const { return timestamp; }
-    std::shared_ptr<IFileSystemItem> getSnapshot() const { return snapshot; }
+    [[nodiscard]] const std::string& getId() const;
+    [[nodiscard]] const std::string& getMessage() const;
+    [[nodiscard]] const std::string& getTimestamp() const;
+    [[nodiscard]] std::shared_ptr<IFileSystemItem> getSnapshot() const;
 };
 
 #endif //MINIGIT_COMMIT_HPP

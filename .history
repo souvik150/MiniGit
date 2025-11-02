@@ -22,3 +22,9 @@
 [file_hook] main.c
 [folder_hook] test
 [commit_hook] commit_1762028371550 first
+[file_hook] fixe.txt
+[folder_hook] test
+[commit_hook] commit_1762053968471 this1
+[file_hook] main.cpp
+[commit_hook] commit_1762059097617 init
+[branch_change_hook] created test
