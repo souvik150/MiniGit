@@ -38,6 +38,7 @@ public:
     static void init(std::unique_ptr<BranchDatabase> branchDB,
                      std::unique_ptr<NotificationService> notifier);
     static GitManager& getInstance();
+    static bool isInitialized();
 
     void addFile(const std::string& name, const std::string& content);
     void addFolder(const std::string& name);

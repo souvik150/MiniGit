@@ -15,6 +15,10 @@
 
 std::unique_ptr<GitManager> GitManager::instance = nullptr;
 
+bool GitManager::isInitialized() {
+    return static_cast<bool>(instance);
+}
+
 GitManager::GitManager(std::unique_ptr<BranchDatabase> branchDB,
                        std::unique_ptr<NotificationService> notifier)
     : branchDBStorage(std::move(branchDB)),
@@ -43,6 +47,7 @@ GitManager& GitManager::getInstance() {
         throw std::runtime_error("GitManager not initialized. Call GitManager::init() first.");
     return *instance;
 }
+
 
 void GitManager::addFile(const std::string& name, const std::string& content) {
     auto& root = workingRoot();

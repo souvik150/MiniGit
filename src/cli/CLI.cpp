@@ -14,9 +14,7 @@
 #include "DefaultBranchFactory.hpp"
 
 CLI::CLI() {
-    try {
-        (void)GitManager::getInstance();
-    } catch (const std::exception&) {
+    if (!GitManager::isInitialized()) {
         bootstrapGitManager();
     }
     registerCommands();

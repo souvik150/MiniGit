@@ -19,3 +19,6 @@
 [commit_hook] commit_1762025691784 thrid 
 [file_hook] foo
 [commit_hook] commit_1762027831564 first
+[file_hook] main.c
+[folder_hook] test
+[commit_hook] commit_1762028371550 first
